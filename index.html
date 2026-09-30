@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reference Express — Cari Referensi. Temukan yang Relevan. Hemat Waktu.</title>
+<meta name="description" content="Jasa pencarian dan kurasi referensi akademik. Referensi tidak hanya ditemukan, tetapi juga dikurasi dan di-highlight pada bagian yang relevan dengan topikmu." />
+<style>
+  /* ============ RESET & BASE ============ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f9fc;
+    --surface: #ffffff;
+    --ink: #0f172a;
+    --ink-soft: #475569;
+    --ink-mute: #94a3b8;
+    --line: #e6ebf3;
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+    --brand-soft: #eff4ff;
+    --accent: #f59e0b;
+    --accent-soft: #fff7e6;
+    --green: #16a34a;
+    --green-soft: #ecfdf5;
+    --highlight: #fff2a8;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 14px 40px rgba(15, 23, 42, 0.10);
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 16px;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, textarea, select { font-family: inherit; font-size: 1rem; }
+
+  /* ============ LAYOUT ============ */
+  .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 72px 0; }
+  .section-head { max-width: 720px; margin: 0 auto 40px; text-align: center; }
+  .section-head h2 {
+    font-size: clamp(1.55rem, 4vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .section-head p { color: var(--ink-soft); font-size: 1.02rem; }
+  .eyebrow {
+    display: inline-block;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+
+  /* ============ NAVBAR ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(247, 249, 252, .85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .25s, box-shadow .25s;
+  }
+  .nav.scrolled { border-bottom-color: var(--line); box-shadow: 0 2px 14px rgba(15,23,42,.04); }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 12px 0;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.02em; font-size: 1.08rem; }
+  .logo-mark {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--brand) 0%, #4f8bff 100%);
+    display: grid; place-items: center;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .28);
+    flex-shrink: 0;
+  }
+  .logo-mark svg { width: 21px; height: 21px; }
+  .logo small { display: block; font-size: .64rem; font-weight: 600; color: var(--ink-mute); letter-spacing: .02em; }
+  .nav-links { display: flex; align-items: center; gap: 26px; }
+  .nav-links a { font-size: .92rem; font-weight: 600; color: var(--ink-soft); transition: color .2s; }
+  .nav-links a:hover { color: var(--brand); }
+  .nav-cta {
+    background: var(--brand); color: #fff;
+    padding: 10px 18px; border-radius: 999px;
+    font-size: .88rem; font-weight: 700;
+    transition: background .2s, transform .2s, box-shadow .2s;
+    display: inline-flex; align-items: center; gap: 7px;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(37,99,235,.28); }
+  .nav-cta svg { width: 15px; height: 15px; }
+  .menu-btn { display: none; padding: 8px; border-radius: 10px; }
+  .menu-btn svg { width: 24px; height: 24px; stroke: var(--ink); }
+
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 20px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    padding: 11px 12px; border-radius: 10px;
+    font-weight: 600; font-size: .95rem; color: var(--ink-soft);
+  }
+  .mobile-menu a:hover { background: var(--brand-soft); color: var(--brand); }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding: 62px 0 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -220px; right: -180px;
+    width: 620px; height: 620px;
+    background: radial-gradient(circle, rgba(37,99,235,.13) 0%, rgba(37,99,235,0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: -260px; left: -220px;
+    width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(245,158,11,.12) 0%, rgba(245,158,11,0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: .8rem; font-weight: 600; color: var(--ink-soft);
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+  }
+  .dot-live {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(22,163,74,.18);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(22,163,74,.18); }
+    50% { box-shadow: 0 0 0 6px rgba(22,163,74,.06); }
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5.4vw, 3.15rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(100deg, var(--brand) 0%, #6d9bff 60%, var(--accent) 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-bottom: 30px;
+    max-width: 560px;
+  }
+  .hero-sub strong { color: var(--ink); font-weight: 700; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 14px 26px;
+    border-radius: 999px;
+    font-weight: 700; font-size: .96rem;
+    transition: transform .2s, box-shadow .2s, background .2s, color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .btn-primary {
+    background: var(--brand); color: #fff;
+    box-shadow: 0 10px 26px rgba(37,99,235,.26);
+  }
+  .btn-primary:hover { background: var(--brand-dark); transform: translateY(-2px); box-shadow: 0 14px 32px rgba(37,99,235,.34); }
+  .btn-ghost {
+    background: var(--surface); color: var(--ink);
+    border: 1.5px solid var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-2px); }
+  .btn-wa {
+    background: #25d366; color: #fff;
+    box-shadow: 0 10px 26px rgba(37,211,102,.28);
+  }
+  .btn-wa:hover { background: #1eb955; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(37,211,102,.36); }
+  .hero-trust {
+    display: flex; flex-wrap: wrap; gap: 18px 26px;
+    font-size: .84rem; color: var(--ink-mute); font-weight: 600;
+  }
+  .hero-trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .hero-trust svg { width: 15px; height: 15px; color: var(--green); }
+
+  /* Hero visual card */
+  .hero-visual { position: relative; }
+  .doc-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 22px;
+    transform: rotate(1.4deg);
+    transition: transform .4s ease;
+  }
+  .doc-card:hover { transform: rotate(0deg) translateY(-4px); }
+  .doc-top {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 14px; margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .doc-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--brand-soft);
+    display: grid; place-items: center;
+    color: var(--brand); flex-shrink: 0;
+  }
+  .doc-icon svg { width: 18px; height: 18px; }
+  .doc-top-meta { flex: 1; min-width: 0; }
+  .doc-top-meta b { display: block; font-size: .84rem; font-weight: 700; }
+  .doc-top-meta span { font-size: .72rem; color: var(--ink-mute); }
+  .doc-tag {
+    font-size: .68rem; font-weight: 700;
+    background: var(--green-soft); color: var(--green);
+    padding: 4px 9px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .doc-lines { display: flex; flex-direction: column; gap: 9px; }
+  .doc-line {
+    height: 9px; border-radius: 5px;
+    background: #eef2f8;
+    position: relative;
+  }
+  .doc-line.w95 { width: 95%; } .doc-line.w88 { width: 88%; }
+  .doc-line.w70 { width: 70%; } .doc-line.w100 { width: 100%; }
+  .doc-line.w60 { width: 60%; } .doc-line.w80 { width: 80%; }
+  .doc-line.hl { background: linear-gradient(90deg, #ffe98a, #fff3b8); }
+  .doc-line.hl::after {
+    content: "RELEVAN";
+    position: absolute; right: 0; top: -7px;
+    font-size: .58rem; font-weight: 800; letter-spacing: .04em;
+    background: var(--accent); color: #fff;
+    padding: 2px 7px; border-radius: 999px;
+    transform: translateY(-6px);
+  }
+  .doc-float {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: .8rem; font-weight: 700;
+    animation: floaty 4.5s ease-in-out infinite;
+  }
+  .doc-float.f1 { bottom: -16px; left: -14px; animation-delay: .4s; }
+  .doc-float.f2 { top: -18px; right: -10px; animation-delay: 1.2s; }
+  .doc-float .ic {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .doc-float .ic.blue { background: var(--brand-soft); color: var(--brand); }
+  .doc-float .ic.amber { background: var(--accent-soft); color: var(--accent); }
+  .doc-float .ic svg { width: 16px; height: 16px; }
+  .doc-float small { display: block; font-size: .68rem; font-weight: 600; color: var(--ink-mute); }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+
+  /* ============ FEATURES ============ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .f-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .f-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(37,99,235,.04), transparent 55%);
+    opacity: 0; transition: opacity .3s;
+    pointer-events: none;
+  }
+  .f-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: #d8e2f5; }
+  .f-card:hover::after { opacity: 1; }
+  .f-icon {
+    width: 48px; height: 48px; border-radius: 13px;
+    display: grid; place-items: center;
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+    background: var(--brand-soft);
+    transition: transform .25s;
+  }
+  .f-card:hover .f-icon { transform: scale(1.08) rotate(-4deg); }
+  .f-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .f-card p { font-size: .9rem; color: var(--ink-soft); }
+
+  /* ============ JENIS REFERENSI ============ */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .ref-option {
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 20px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .22s;
+    user-select: none;
+    position: relative;
+  }
+  .ref-option:hover { border-color: #bfd3f7; transform: translateY(-3px); box-shadow: var(--shadow); }
+  .ref-option.active {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    box-shadow: 0 8px 22px rgba(37,99,235,.14);
+  }
+  .ref-option.active::before {
+    content: "✓";
+    position: absolute; top: 8px; right: 10px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--brand); color: #fff;
+    font-size: .7rem; font-weight: 800;
+    display: grid; place-items: center;
+  }
+  .ref-option .emoji { font-size: 1.6rem; display: block; margin-bottom: 8px; }
+  .ref-option b { font-size: .9rem; font-weight: 700; display: block; }
+  .ref-option small { font-size: .72rem; color: var(--ink-mute); display: block; margin-top: 2px; }
+
+  /* ============ FORM + SUMMARY ============ */
+  .order-wrap {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .form-card, .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .form-card { padding: 30px; }
+  .summary-card {
+    padding: 26px;
+    position: sticky; top: 90px;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: .88rem; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .form-group label .opt {
+    font-weight: 500; color: var(--ink-mute); font-size: .78rem;
+  }
+  .form-group .hint { font-size: .78rem; color: var(--ink-mute); margin-top: 6px; display: block; }
+  .form-control {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fbfcfe;
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s, background .2s;
+    font-size: .95rem;
+  }
+  .form-control::placeholder { color: var(--ink-mute); }
+  .form-control:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37,99,235,.11);
+  }
+  textarea.form-control { resize: vertical; min-height: 96px; line-height: 1.55; }
+  .form-control.error { border-color: #ef4444; background: #fff5f5; }
+  .error-msg {
+    display: none;
+    font-size: .78rem; color: #dc2626; font-weight: 600;
+    margin-top: 6px;
+  }
+  .error-msg.show { display: block; }
+
+  /* amount chips */
+  .amount-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    flex: 1 1 120px;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 13px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: #fbfcfe;
+    user-select: none;
+  }
+  .chip:hover { border-color: #bfd3f7; }
+  .chip.active { border-color: var(--brand); background: var(--brand-soft); }
+  .chip b { display: block; font-size: .92rem; font-weight: 700; }
+  .chip small { font-size: .74rem; color: var(--ink-soft); }
+  .chip .save-badge {
+    display: inline-block;
+    font-size: .64rem; font-weight: 800;
+    background: var(--green); color: #fff;
+    padding: 2px 8px; border-radius: 999px;
+    margin-top: 5px;
+  }
+  #customAmountWrap { display: none; margin-top: 12px; }
+  #customAmountWrap.show { display: block; }
+
+  /* summary */
+  .summary-title {
+    font-size: 1.05rem; font-weight: 800;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .summary-title svg { width: 19px; height: 19px; color: var(--brand); }
+  .summary-row {
+    display: flex; justify-content: space-between; gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: .9rem;
+  }
+  .summary-row .lbl { color: var(--ink-soft); flex-shrink: 0; }
+  .summary-row .val { font-weight: 700; text-align: right; word-break: break-word; }
+  .summary-row .val.empty { color: var(--ink-mute); font-weight: 500; font-style: italic; }
+  .summary-total {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--brand) 0%, #3b7bff 100%);
+    color: #fff;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px;
+  }
+  .summary-total .lbl { font-size: .84rem; opacity: .9; font-weight: 600; }
+  .summary-total .amt { font-size: 1.32rem; font-weight: 800; letter-spacing: -0.02em; }
+  .savings-note {
+    margin-top: 12px;
+    background: var(--accent-soft);
+    border: 1px solid #ffe6b3;
+    color: #92600a;
+    font-size: .78rem; font-weight: 600;
+    padding: 10px 13px;
+    border-radius: var(--radius-sm);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .savings-note svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+  .wa-order-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 16px 20px;
+    font-size: 1rem;
+  }
+  .form-note {
+    font-size: .76rem;
+    color: var(--ink-mute);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* toast */
+  .toast-wrap {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex; flex-direction: column; gap: 10px;
+    width: min(92vw, 420px);
+    pointer-events: none;
+  }
+  .toast {
+    background: #1e293b;
+    color: #fff;
+    padding: 13px 18px;
+    border-radius: 12px;
+    font-size: .87rem; font-weight: 600;
+    box-shadow: 0 12px 30px rgba(15,23,42,.28);
+    display: flex; align-items: center; gap: 10px;
+    animation: toastIn .35s cubic-bezier(.2,.9,.3,1.2);
+    pointer-events: auto;
+  }
+  .toast.err { background: #b91c1c; }
+  .toast.ok { background: #15803d; }
+  .toast svg { width: 17px; height: 17px; flex-shrink: 0; }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-14px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .toast.hide { animation: toastOut .3s forwards; }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateY(-12px) scale(.96); }
+  }
+
+  /* ============ STEPS / TIMELINE ============ */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 24px 24px;
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .step:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, var(--brand), #4f8bff);
+    color: #fff;
+    font-weight: 800; font-size: 1.1rem;
+    display: grid; place-items: center;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(37,99,235,.24);
+  }
+  .step h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 7px; }
+  .step p { font-size: .88rem; color: var(--ink-soft); }
+
+  /* ============ PAYMENT ============ */
+  .pay-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+    max-width: 860px;
+    margin: 0 auto 26px;
+  }
+  .pay-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-align: center;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .pay-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .pay-logo {
+    width: 52px; height: 52px;
+    border-radius: 15px;
+    display: grid; place-items: center;
+    margin: 0 auto 13px;
+    font-weight: 800; font-size: .95rem;
+    color: #fff;
+  }
+  .pay-logo.dana { background: linear-gradient(135deg, #118eea, #0a6fc0); }
+  .pay-logo.gopay { background: linear-gradient(135deg, #00aed6, #0081a0); }
+  .pay-logo.shopee { background: linear-gradient(135deg, #ee4d2d, #c93a1f); }
+  .pay-card h3 { font-size: .98rem; font-weight: 700; margin-bottom: 4px; }
+  .pay-number {
+    font-size: 1.02rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+    color: var(--ink);
+    margin-bottom: 13px;
+    word-break: break-all;
+  }
+  .copy-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    font-weight: 700; font-size: .85rem;
+    transition: background .2s, transform .15s;
+  }
+  .copy-btn:hover { background: #dbe7ff; }
+  .copy-btn:active { transform: scale(.97); }
+  .copy-btn.copied { background: var(--green-soft); color: var(--green); }
+  .copy-btn svg { width: 15px; height: 15px; }
+  .pay-note {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed #cfd9ea;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    font-size: .9rem;
+    color: var(--ink-soft);
+  }
+  .pay-note strong { color: var(--ink); }
+
+  /* ============ CONTOH HASIL ============ */
+  .demo-wrap { max-width: 780px; margin: 0 auto; }
+  .demo-topic {
+    background: var(--brand-soft);
+    border: 1px solid #d6e3ff;
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: .9rem;
+    margin-bottom: 20px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .demo-topic svg { width: 17px; height: 17px; color: var(--brand); flex-shrink: 0; margin-top: 2px; }
+  .demo-topic b { color: var(--brand-dark); }
+  .paper {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .paper-bar {
+    display: flex; align-items: center; gap: 7px;
+    padding: 12px 16px;
+    background: #f1f5fb;
+    border-bottom: 1px solid var(--line);
+  }
+  .paper-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .paper-bar .dot.r { background: #f87171; }
+  .paper-bar .dot.y { background: #fbbf24; }
+  .paper-bar .dot.g { background: #34d399; }
+  .paper-bar .file {
+    margin-left: 10px;
+    font-size: .76rem; font-weight: 600; color: var(--ink-mute);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .paper-body { padding: 26px 28px 30px; }
+  .paper-body h4 {
+    font-size: .98rem; font-weight: 800;
+    margin-bottom: 4px; line-height: 1.4;
+  }
+  .paper-body .authors {
+    font-size: .76rem; color: var(--ink-mute);
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .paper-body p {
+    font-size: .89rem;
+    color: #334155;
+    margin-bottom: 13px;
+    line-height: 1.75;
+  }
+  .mark {
+    background: var(--highlight);
+    padding: 1.5px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .mark-tag {
+    display: inline-block;
+    font-size: .58rem; font-weight: 800;
+    letter-spacing: .05em;
+    background: var(--accent); color: #fff;
+    padding: 1px 7px; border-radius: 999px;
+    vertical-align: 2px;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+  .demo-caption {
+    text-align: center;
+    font-size: .8rem;
+    color: var(--ink-mute);
+    margin-top: 18px;
+    font-style: italic;
+  }
+
+  /* ============ FAQ ============ */
+  .faq-wrap { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .25s, box-shadow .25s;
+  }
+  .faq-item.open { border-color: #cfdffb; box-shadow: var(--shadow); }
+  .faq-q {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 18px 22px;
+    text-align: left;
+    font-weight: 700; font-size: .95rem;
+    color: var(--ink);
+    transition: color .2s;
+  }
+  .faq-q:hover { color: var(--brand); }
+  .faq-q .ico {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--brand-soft); color: var(--brand);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    transition: transform .3s, background .25s, color .25s;
+  }
+  .faq-q .ico svg { width: 14px; height: 14px; }
+  .faq-item.open .faq-q .ico { background: var(--brand); color: #fff; transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease;
+  }
+  .faq-a-inner {
+    padding: 0 22px 20px;
+    font-size: .9rem; color: var(--ink-soft); line-height: 1.7;
+  }
+
+  /* ============ INSTAGRAM ============ */
+  .ig-section {
+    background: linear-gradient(135deg, #fdf1f8 0%, #eef4ff 100%);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .ig-box {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 42px 28px;
+    box-shadow: var(--shadow);
+  }
+  .ig-ico {
+    width: 62px; height: 62px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f58529, #dd2a7b 55%, #8134af);
+    display: grid; place-items: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 12px 28px rgba(221, 42, 123, .28);
+  }
+  .ig-ico svg { width: 30px; height: 30px; color: #fff; }
+  .ig-box h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .ig-box p { color: var(--ink-soft); font-size: .95rem; margin-bottom: 22px; }
+  .ig-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: linear-gradient(135deg, #f58529, #dd2a7b 55%, #8134af);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 999px;
+    font-weight: 700; font-size: .95rem;
+    box-shadow: 0 10px 26px rgba(221, 42, 123, .3);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .ig-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(221, 42, 123, .38); }
+  .ig-btn svg { width: 18px; height: 18px; }
+
+  /* ============ FOOTER ============ */
+  footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 28px; }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 36px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .footer-brand .logo { color: #fff; margin-bottom: 14px; }
+  .footer-brand .logo small { color: #64748b; }
+  .footer-brand p { font-size: .88rem; color: #94a3b8; max-width: 320px; line-height: 1.7; }
+  .footer-col h4 {
+    font-size: .82rem; font-weight: 800;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col li, .footer-col a {
+    font-size: .88rem; color: #cbd5e1;
+    display: flex; align-items: center; gap: 9px;
+    transition: color .2s;
+  }
+  .footer-col a:hover { color: #fff; }
+  .footer-col svg { width: 15px; height: 15px; color: #64748b; flex-shrink: 0; }
+  .footer-pay { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .footer-pay span {
+    font-size: .74rem; font-weight: 700;
+    background: #1e293b; color: #cbd5e1;
+    padding: 5px 11px; border-radius: 999px;
+  }
+  .footer-bottom {
+    padding-top: 22px;
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: space-between; align-items: center;
+    font-size: .82rem; color: #64748b;
+  }
+  .footer-bottom a { color: #94a3b8; }
+  .footer-bottom a:hover { color: #fff; }
+
+  /* ============ FLOATING WA ============ */
+  .float-wa {
+    position: fixed;
+    right: 20px; bottom: 20px;
+    z-index: 100;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: #25d366;
+    display: grid; place-items: center;
+    box-shadow: 0 12px 28px rgba(37, 211, 102, .42);
+    transition: transform .25s, box-shadow .25s;
+    animation: waPulse 2.6s infinite;
+  }
+  .float-wa:hover { transform: scale(1.08); box-shadow: 0 16px 36px rgba(37, 211, 102, .5); }
+  .float-wa svg { width: 30px; height: 30px; color: #fff; }
+  .float-wa .tooltip {
+    position: absolute;
+    right: 72px; top: 50%;
+    transform: translateY(-50%) translateX(8px);
+    background: #0f172a; color: #fff;
+    font-size: .78rem; font-weight: 600;
+    padding: 8px 13px;
+    border-radius: 9px;
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s;
+  }
+  .float-wa:hover .tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+  @keyframes waPulse {
+    0%, 100% { box-shadow: 0 12px 28px rgba(37,211,102,.42), 0 0 0 0 rgba(37,211,102,.5); }
+    70% { box-shadow: 0 12px 28px rgba(37,211,102,.42), 0 0 0 16px rgba(37,211,102,0); }
+  }
+
+  /* ============ REVEAL ANIMATION ============ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+    .hero-visual { max-width: 460px; margin: 0 auto; width: 100%; }
+    .order-wrap { grid-template-columns: 1fr; }
+    .summary-card { position: static; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 720px) {
+    section { padding: 56px 0; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .menu-btn { display: block; }
+    .hero { padding: 40px 0 56px; }
+    .hero-actions .btn { flex: 1 1 auto; }
+    .hero-trust { gap: 12px 18px; }
+    .form-card { padding: 22px 20px; }
+    .summary-card { padding: 20px; }
+    .doc-float.f1 { left: -6px; bottom: -12px; }
+    .doc-float.f2 { right: -4px; top: -14px; }
+    .paper-body { padding: 20px 18px 22px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 420px) {
+    .container { padding: 0 16px; }
+    .btn { padding: 13px 20px; font-size: .9rem; }
+    .amount-chips { flex-direction: column; }
+    .chip { flex: 1 1 auto; }
+    .ref-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .ref-option { padding: 16px 10px; }
+    .float-wa { width: 54px; height: 54px; right: 14px; bottom: 14px; }
+    .float-wa svg { width: 26px; height: 26px; }
+    .float-wa .tooltip { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= TOAST ================= -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ================= NAVBAR ================= -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          <circle cx="13" cy="9" r="2.2"/>
+          <path d="m15 11 2.5 2.5"/>
+        </svg>
+      </span>
+      <span>
+        Reference Express
+        <small>Cari • Kurasi • Highlight</small>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="#keunggulan">Keunggulan</a>
+      <a href="#jenis">Jenis Referensi</a>
+      <a href="#pesan">Pesan</a>
+      <a href="#cara-kerja">Cara Kerja</a>
+      <a href="#pembayaran">Pembayaran</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="nav-cta" href="https://wa.me/6282228985071?text=Halo%20Reference%20Express%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01a7.94 7.94 0 0 0 5.54-13.58zM12.06 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.6 6.6 0 1 1 5.58 3.09zm3.62-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.51.64-.63.77-.23.15-.43.05a5.4 5.4 0 0 1-1.59-.98 6 6 0 0 1-1.1-1.37c-.11-.2 0-.3.09-.4l.3-.35a1.36 1.36 0 0 0 .2-.34.37.37 0 0 0 0-.35c0-.1-.44-1.07-.6-1.46s-.32-.33-.44-.34h-.38a.73.73 0 0 0-.53.25 2.22 2.22 0 0 0-.7 1.66 3.87 3.87 0 0 0 .82 2.05 8.85 8.85 0 0 0 3.4 3 11.6 11.6 0 0 0 1.14.42 2.73 2.73 0 0 0 1.26.08 2.06 2.06 0 0 0 1.35-.95 1.67 1.67 0 0 0 .12-.95c-.05-.09-.18-.14-.38-.24z"/></svg>
+      Pesan
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#keunggulan">Keunggulan</a>
+    <a href="#jenis">Jenis Referensi</a>
+    <a href="#pesan">Pesan Sekarang</a>
+    <a href="#cara-kerja">Cara Kerja</a>
+    <a href="#pembayaran">Pembayaran</a>
+    <a href="#contoh">Contoh Hasil</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://wa.me/6282228985071" target="_blank" rel="noopener" style="color:var(--green);font-weight:800;">💬 WhatsApp 082228985071</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-text reveal">
+      <span class="hero-badge">
+        <span class="dot-live"></span>
+        Jasa Kurasi Referensi Akademik
+      </span>
+      <h1>
+        Cari Referensi.<br/>
+        <span class="grad">Temukan yang Relevan.</span><br/>
+        Hemat Waktu.
+      </h1>
+      <p class="hero-sub">
+        Jasa pencarian dan kurasi referensi untuk tugas, makalah, proposal, skripsi,
+        penelitian, dan kebutuhan akademik lainnya. Referensi tidak hanya ditemukan,
+        tetapi juga <strong>dikurasi dan di-highlight</strong> pada bagian yang relevan
+        dengan topikmu.
+      </p>
+      <div class="hero-actions">
+        <a href="#pesan" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Pesan Sekarang
+        </a>
+        <a href="#cara-kerja" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Cara Kerja
+        </a>
+      </div>
+      <div class="hero-trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Bagian relevan di-highlight</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Mulai Rp2.000 / referensi</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Jurnal, buku, artikel & lainnya</span>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal">
+      <div class="doc-card">
+        <div class="doc-top">
+          <span class="doc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          </span>
+          <div class="doc-top-meta">
+            <b>Hasil Kurasi Referensi</b>
+            <span>Contoh tampilan dokumen</span>
+          </div>
+          <span class="doc-tag">Relevan</span>
+        </div>
+        <div class="doc-lines">
+          <div class="doc-line w100"></div>
+          <div class="doc-line w88"></div>
+          <div class="doc-line hl w95"></div>
+          <div class="doc-line w70"></div>
+          <div class="doc-line w100"></div>
+          <div class="doc-line hl w80"></div>
+          <div class="doc-line w60"></div>
+          <div class="doc-line w95"></div>
+        </div>
+      </div>
+      <div class="doc-float f1">
+        <span class="ic blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <span>Dicari sesuai topik<small>bukan hasil acak</small></span>
+      </div>
+      <div class="doc-float f2">
+        <span class="ic amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span>Bagian relevan<small>langsung ditandai</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KEUNGGULAN ================= -->
+<section id="keunggulan">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Keunggulan</span>
+      <h2>Kenapa Reference Express?</h2>
+      <p>Kami bukan sekadar memberikan daftar referensi. Kami bantu kamu menemukan bagian yang benar-benar berkaitan dengan topikmu.</p>
+    </div>
+    <div class="cards-grid">
+      <div class="f-card reveal">
+        <div class="f-icon">🔎</div>
+        <h3>Pencarian Sesuai Topik</h3>
+        <p>Referensi dicari berdasarkan topik dan kebutuhan yang kamu berikan, bukan asal comot hasil pencarian.</p>
+      </div>
+      <div class="f-card reveal">
+        <div class="f-icon">📌</div>
+        <h3>Bagian Relevan Di-highlight</h3>
+        <p>Kamu tidak perlu membaca seluruh dokumen terlebih dahulu. Bagian yang berkaitan dengan topik akan ditunjukkan.</p>
+      </div>
+      <div class="f-card reveal">
+        <div class="f-icon">📚</div>
+        <h3>Berbagai Jenis Referensi</h3>
+        <p>Melayani pencarian jurnal, buku, website, artikel, prosiding, dan jenis sumber lainnya.</p>
+      </div>
+      <div class="f-card reveal">
+        <div class="f-icon">⏱️</div>
+        <h3>Hemat Waktu</h3>
+        <p>Membantu kamu menghemat waktu dalam mencari dan menyaring referensi yang berserakan.</p>
+      </div>
+      <div class="f-card reveal">
+        <div class="f-icon">🎯</div>
+        <h3>Lebih Terarah</h3>
+        <p>Referensi disesuaikan dengan kebutuhanmu, bukan sekadar memberikan hasil pencarian secara acak.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JENIS REFERENSI ================= -->
+<section id="jenis" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Pilih Jenis Referensi</span>
+      <h2>Mau referensi seperti apa?</h2>
+      <p>Pilih satu atau beberapa jenis. Kalau belum yakin, pilih <b>Bebas / Tidak Yakin</b> — kami bantu tentukan yang paling pas.</p>
+    </div>
+    <div class="ref-grid" id="refGrid">
+      <div class="ref-option" data-ref="Jurnal"><span class="emoji">📄</span><b>Jurnal</b><small>artikel ilmiah</small></div>
+      <div class="ref-option" data-ref="Buku"><span class="emoji">📕</span><b>Buku</b><small>textbook & referensi</small></div>
+      <div class="ref-option" data-ref="Website"><span class="emoji">🌐</span><b>Website</b><small>sumber online</small></div>
+      <div class="ref-option" data-ref="Artikel"><span class="emoji">📰</span><b>Artikel</b><small>artikel ilmiah/populer</small></div>
+      <div class="ref-option" data-ref="Prosiding"><span class="emoji">🎓</span><b>Prosiding</b><small>seminar & konferensi</small></div>
+      <div class="ref-option" data-ref="Sumber Lainnya"><span class="emoji">📦</span><b>Sumber Lainnya</b><small>skripsi, tesis, dll</small></div>
+      <div class="ref-option" data-ref="Bebas / Tidak Yakin"><span class="emoji">🤔</span><b>Bebas / Tidak Yakin</b><small>kami bantu pilihkan</small></div>
+    </div>
+    <p style="text-align:center;font-size:.82rem;color:var(--ink-mute);margin-top:18px;">
+      Pilihan ini akan otomatis masuk ke form pemesanan di bawah. 👇
+    </p>
+  </div>
+</section>
+
+<!-- ================= FORM PEMESANAN ================= -->
+<section id="pesan">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Pemesanan</span>
+      <h2>Isi Form, Cek Harga, Pesan</h2>
+      <p>Isi topikmu, pilih jumlah referensi, dan total harga akan otomatis terhitung.</p>
+    </div>
+
+    <div class="order-wrap">
+      <!-- FORM -->
+      <form class="form-card reveal" id="orderForm" novalidate>
+        <div class="form-group">
+          <label for="nama">Nama <span class="opt">(wajib)</span></label>
+          <input type="text" class="form-control" id="nama" placeholder="Contoh: Siti Rahma" autocomplete="name" />
+          <span class="error-msg" id="err-nama">Mohon isi nama kamu dulu ya.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="topik">Topik Referensi <span class="opt">(wajib)</span></label>
+          <textarea class="form-control" id="topik" placeholder="Contoh: Pengembangan e-modul IPA berbasis etnosains untuk meningkatkan literasi sains siswa SMP"></textarea>
+          <span class="error-msg" id="err-topik">Topik referensinya belum diisi.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="jenisSelect">Jenis Referensi</label>
+          <select class="form-control" id="jenisSelect">
+            <option value="">— Pilih jenis referensi —</option>
+            <option value="Jurnal">Jurnal</option>
+            <option value="Buku">Buku</option>
+            <option value="Website">Website</option>
+            <option value="Artikel">Artikel</option>
+            <option value="Prosiding">Prosiding</option>
+            <option value="Sumber Lainnya">Sumber Lainnya</option>
+            <option value="Bebas / Tidak Yakin">Bebas / Tidak Yakin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Jumlah Referensi</label>
+          <div class="amount-chips" id="amountChips">
+            <div class="chip active" data-amount="1">
+              <b>1 Referensi</b>
+              <small>Rp2.000</small>
+            </div>
+            <div class="chip" data-amount="3">
+              <b>3 Referensi</b>
+              <small>Rp5.000</small>
+              <span class="save-badge">HEMAT</span>
+            </div>
+            <div class="chip" data-amount="custom">
+              <b>Custom</b>
+              <small>jumlah lainnya</small>
+            </div>
+          </div>
+          <div id="customAmountWrap">
+            <input type="number" class="form-control" id="customAmount" min="1" max="100" placeholder="Masukkan jumlah referensi (mis. 5)" />
+            <span class="error-msg" id="err-custom">Masukkan jumlah minimal 1 referensi.</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="detail">Detail Kebutuhan <span class="opt">(opsional)</span></label>
+          <textarea class="form-control" id="detail" placeholder="Contoh: Fokus pada 5 tahun terakhir, materi IPA SMP, dan referensi yang membahas literasi sains."></textarea>
+          <span class="hint">Semakin detail, semakin terarah pencariannya.</span>
+        </div>
+      </form>
+
+      <!-- RINGKASAN -->
+      <aside class="summary-card reveal">
+        <div class="summary-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H3v10h6zM21 3h-6v18h6zM15 7H9v14h6z"/></svg>
+          Ringkasan Pesanan
+        </div>
+
+        <div class="summary-row">
+          <span class="lbl">Jenis referensi</span>
+          <span class="val empty" id="sumJenis">Belum dipilih</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Jumlah referensi</span>
+          <span class="val" id="sumJumlah">1 referensi</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Harga</span>
+          <span class="val" id="sumHarga">Rp2.000</span>
+        </div>
+
+        <div class="summary-total">
+          <span class="lbl">Total pembayaran</span>
+          <span class="amt" id="sumTotal">Rp2.000</span>
+        </div>
+
+        <div class="savings-note" id="savingsNote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Paket 3 referensi lebih hemat dibanding membeli satuan.</span>
+        </div>
+
+        <button type="button" class="btn btn-wa wa-order-btn" id="waOrderBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01a7.94 7.94 0 0 0 5.54-13.58zM12.06 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.6 6.6 0 1 1 5.58 3.09z"/></svg>
+          Pesan Sekarang via WhatsApp
+        </button>
+        <p class="form-note">Tombol akan membuka WhatsApp dengan pesan yang sudah otomatis terisi dari data form kamu.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARA KERJA ================= -->
+<section id="cara-kerja" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Cara Kerja</span>
+      <h2>Alur Pemesanan</h2>
+      <p>Cuma 4 langkah simpel dari isi form sampai referensi siap kamu pakai.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Isi Form</h3>
+        <p>Masukkan topik dan kebutuhan referensi kamu secara detail.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Pilih Paket</h3>
+        <p>Pilih jumlah dan jenis referensi yang kamu butuhkan.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Lakukan Pembayaran</h3>
+        <p>Pembayaran dilakukan melalui e-wallet yang tersedia (DANA, GoPay, ShopeePay).</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <h3>Referensi Diproses</h3>
+        <p>Referensi dicari, diseleksi, dan bagian yang relevan akan di-highlight sebelum hasil diberikan kepadamu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PEMBAYARAN ================= -->
+<section id="pembayaran">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Pembayaran</span>
+      <h2>Metode Pembayaran</h2>
+      <p>Pilih salah satu e-wallet di bawah ini, lalu salin nomornya.</p>
+    </div>
+    <div class="pay-grid">
+      <div class="pay-card reveal">
+        <div class="pay-logo dana">DANA</div>
+        <h3>DANA</h3>
+        <div class="pay-number" data-num="081246943448">081246943448</div>
+        <button class="copy-btn" data-copy="081246943448">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Salin
+        </button>
+      </div>
+      <div class="pay-card reveal">
+        <div class="pay-logo gopay">GoPay</div>
+        <h3>GoPay</h3>
+        <div class="pay-number" data-num="089654214872">089654214872</div>
+        <button class="copy-btn" data-copy="089654214872">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Salin
+        </button>
+      </div>
+      <div class="pay-card reveal">
+        <div class="pay-logo shopee">ShopeePay</div>
+        <h3>ShopeePay</h3>
+        <div class="pay-number" data-num="089654214872">089654214872</div>
+        <button class="copy-btn" data-copy="089654214872">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Salin
+        </button>
+      </div>
+    </div>
+    <div class="pay-note reveal">
+      Setelah melakukan pembayaran, kirim <strong>bukti pembayaran</strong> melalui WhatsApp Reference Express.
+      Pembayaran diproses secara manual melalui e-wallet, jadi pastikan kirim bukti ya.
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTOH HASIL ================= -->
+<section id="contoh" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Contoh Hasil</span>
+      <h2>Contoh Hasil Reference Express</h2>
+      <p>Begini gambaran bagaimana bagian relevan ditandai pada dokumen yang kamu terima.</p>
+    </div>
+
+    <div class="demo-wrap reveal">
+      <div class="demo-topic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span><b>Topik pelanggan:</b> “Literasi sains siswa”</span>
+      </div>
+
+      <div class="paper">
+        <div class="paper-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="file">contoh-dokumen-referensi.pdf</span>
+        </div>
+        <div class="paper-body">
+          <h4>Peningkatan Literasi Sains melalui Pembelajaran Berbasis Konteks</h4>
+          <div class="authors">Contoh ilustrasi dokumen — bukan jurnal asli</div>
+          <p>
+            Penelitian ini bertujuan untuk menganalisis
+            <span class="mark">peningkatan literasi sains siswa<span class="mark-tag">RELEVAN</span></span>
+            melalui penerapan pembelajaran berbasis konteks di jenjang sekolah menengah.
+          </p>
+          <p>
+            Hasil penelitian menunjukkan bahwa
+            <span class="mark">kemampuan literasi sains siswa<span class="mark-tag">RELEVAN</span></span>
+            mengalami peningkatan yang signifikan setelah diberikan perlakuan.
+            Siswa lebih mampu mengaitkan konsep dengan fenomena sehari-hari.
+          </p>
+          <p>
+            Selain itu, faktor pendukung seperti
+            <span class="mark">keterlibatan aktif siswa<span class="mark-tag">RELEVAN</span></span>
+            dan penggunaan media pembelajaran yang relevan turut mempengaruhi hasil belajar.
+          </p>
+          <p>
+            Dengan demikian, pendekatan ini dapat menjadi alternatif untuk
+            <span class="mark">meningkatkan literasi sains<span class="mark-tag">RELEVAN</span></span>
+            di tingkat pendidikan menengah.
+          </p>
+        </div>
+      </div>
+
+      <p class="demo-caption">
+        Bagian yang disorot merupakan contoh ilustrasi untuk menunjukkan cara kerja layanan.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2>Pertanyaan yang Sering Ditanya</h2>
+      <p>Belum ketemu jawabannya? Langsung tanya via WhatsApp aja.</p>
+    </div>
+
+    <div class="faq-wrap reveal">
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Apa itu Reference Express?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Reference Express adalah jasa pencarian dan kurasi referensi sesuai topik yang dibutuhkan pelanggan.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Apakah Reference Express sama seperti Google Scholar?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Tidak. Reference Express berfokus pada pencarian dan penyaringan referensi sesuai kebutuhan pelanggan serta membantu menunjukkan bagian yang relevan.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Bisa mencari jurnal saja?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Bisa. Kamu dapat memilih jurnal, buku, website, artikel, prosiding, atau jenis sumber lainnya.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Apakah bisa menentukan topik sendiri?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Bisa. Kamu dapat menuliskan topik dan kebutuhan secara spesifik melalui form pemesanan.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Bagaimana cara memesan?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Isi form pemesanan, cek total harga, kemudian lanjutkan pemesanan melalui WhatsApp.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Bagaimana cara membayar?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Pembayaran dapat dilakukan melalui DANA, GoPay, atau ShopeePay.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Apakah referensinya langsung dikirim setelah pembayaran?</span>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Waktu pengerjaan mengikuti antrean dan tingkat kesulitan pencarian. Kami akan menginformasikan estimasi setelah pesanan dikonfirmasi.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSTAGRAM ================= -->
+<section class="ig-section">
+  <div class="container">
+    <div class="ig-box reveal">
+      <div class="ig-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <h3>Follow Reference Express</h3>
+      <p>Dapatkan info seputar tips mencari referensi, update layanan, dan konten akademik lainnya.</p>
+      <a href="https://instagram.com/reference.express" target="_blank" rel="noopener" class="ig-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+        @reference.express
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              <circle cx="13" cy="9" r="2.2"/>
+              <path d="m15 11 2.5 2.5"/>
+            </svg>
+          </span>
+          <span>
+            Reference Express
+            <small>Cari • Kurasi • Highlight</small>
+          </span>
+        </div>
+        <p>“Cari Referensi. Temukan yang Relevan. Hemat Waktu.” — Jasa pencarian dan kurasi referensi akademik untuk mahasiswa, pelajar, guru, dan peneliti.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Kontak</h4>
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01a7.94 7.94 0 0 0 5.54-13.58z"/></svg>
+            <a href="https://wa.me/6282228985071" target="_blank" rel="noopener">WhatsApp: 082228985071</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+            <a href="https://instagram.com/reference.express" target="_blank" rel="noopener">Instagram: @reference.express</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pembayaran</h4>
+        <div class="footer-pay">
+          <span>DANA</span>
+          <span>GoPay</span>
+          <span>ShopeePay</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Reference Express. All rights reserved.</span>
+      <span>Dibuat dengan ❤️ untuk kamu yang sibuk mengejar deadline.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= FLOATING WA ================= -->
+<a href="https://wa.me/6282228985071?text=Halo%20Reference%20Express%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener" class="float-wa" aria-label="Chat WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01a7.94 7.94 0 0 0 5.54-13.58zM12.06 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.6 6.6 0 1 1 5.58 3.09zm3.62-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.51.64-.63.77-.23.15-.43.05a5.4 5.4 0 0 1-1.59-.98 6 6 0 0 1-1.1-1.37c-.11-.2 0-.3.09-.4l.3-.35a1.36 1.36 0 0 0 .2-.34.37.37 0 0 0 0-.35c0-.1-.44-1.07-.6-1.46s-.32-.33-.44-.34h-.38a.73.73 0 0 0-.53.25 2.22 2.22 0 0 0-.7 1.66 3.87 3.87 0 0 0 .82 2.05 8.85 8.85 0 0 0 3.4 3 11.6 11.6 0 0 0 1.14.42 2.73 2.73 0 0 0 1.26.08 2.06 2.06 0 0 0 1.35-.95 1.67 1.67 0 0 0 .12-.95c-.05-.09-.18-.14-.38-.24z"/></svg>
+  <span class="tooltip">Chat via WhatsApp</span>
+</a>
+
+<script>
+/* ================================================================
+   REFERENCE EXPRESS — SCRIPT
+   ================================================================ */
+(function() {
+  'use strict';
+
+  const WA_NUMBER = '6282228985071';
+  const PRICE_SINGLE = 2000;
+  const PRICE_PACK_3 = 5000;
+
+  /* ---------- Helpers ---------- */
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const rupiah = (n) => 'Rp' + n.toLocaleString('id-ID');
+
+  /* ---------- Toast ---------- */
+  const toastWrap = $('#toastWrap');
+  function showToast(msg, type = '') {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    let icon = '';
+    if (type === 'err') {
+      icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>';
+    } else if (type === 'ok') {
+      icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    } else {
+      icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+    }
+    el.innerHTML = icon + '<span>' + msg + '</span>';
+    toastWrap.appendChild(el);
+    setTimeout(() => {
+      el.classList.add('hide');
+      setTimeout(() => el.remove(), 320);
+    }, 3200);
+  }
+
+  /* ---------- Navbar scroll shadow ---------- */
+  const nav = $('#nav');
+  const onScroll = () => {
+    if (window.scrollY > 10) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- Mobile menu ---------- */
+  const menuBtn = $('#menuBtn');
+  const mobileMenu = $('#mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  $$('#mobileMenu a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+  /* ---------- Reveal on scroll ---------- */
+  const revealEls = $$('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
+  }
+
+  /* ---------- FAQ accordion ---------- */
+  $$('.faq-item').forEach(item => {
+    const q = $('.faq-q', item);
+    const a = $('.faq-a', item);
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      $$('.faq-item').forEach(other => {
+        other.classList.remove('open');
+        $('.faq-a', other).style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  /* ---------- Copy buttons ---------- */
+  $$('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.getAttribute('data-copy');
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        const original = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Tersalin!';
+        showToast('Nomor ' + text + ' berhasil disalin.', 'ok');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = original;
+        }, 1800);
+      } catch (e) {
+        showToast('Gagal menyalin. Salin manual ya: ' + text, 'err');
+      }
+    });
+  });
+
+  /* ---------- Jenis Referensi cards -> form ---------- */
+  const jenisSelect = $('#jenisSelect');
+  $$('#refGrid .ref-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const val = opt.getAttribute('data-ref');
+      const already = opt.classList.contains('active');
+      $$('#refGrid .ref-option').forEach(o => o.classList.remove('active'));
+      if (!already) {
+        opt.classList.add('active');
+        jenisSelect.value = val;
+        showToast('Jenis referensi dipilih: ' + val, 'ok');
+      } else {
+        jenisSelect.value = '';
+      }
+      updateSummary();
+    });
+  });
+  // sync dari select ke card
+  jenisSelect.addEventListener('change', () => {
+    const val = jenisSelect.value;
+    $$('#refGrid .ref-option').forEach(o => {
+      o.classList.toggle('active', o.getAttribute('data-ref') === val);
+    });
+    updateSummary();
+  });
+
+  /* ---------- Jumlah Referensi chips ---------- */
+  const amountChips = $('#amountChips');
+  const customWrap = $('#customAmountWrap');
+  const customInput = $('#customAmount');
+  let selectedAmount = 1; // 1, 3, atau 'custom'
+
+  $$('.chip', amountChips).forEach(chip => {
+    chip.addEventListener('click', () => {
+      $$('.chip', amountChips).forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const val = chip.getAttribute('data-amount');
+      if (val === 'custom') {
+        selectedAmount = 'custom';
+        customWrap.classList.add('show');
+        customInput.focus();
+      } else {
+        selectedAmount = parseInt(val, 10);
+        customWrap.classList.remove('show');
+        customInput.value = '';
+        $('#err-custom').classList.remove('show');
+        customInput.classList.remove('error');
+      }
+      updateSummary();
+    });
+  });
+
+  customInput.addEventListener('input', () => {
+    $('#err-custom').classList.remove('show');
+    customInput.classList.remove('error');
+    updateSummary();
+  });
+
+  /* ---------- Hitung harga ---------- */
+  function hitungHarga(jumlah) {
+    if (jumlah === 3) return { total: PRICE_PACK_3, satuan: PRICE_PACK_3 / 3, label: 'Paket 3 (hemat)' };
+    if (jumlah === 1) return { total: PRICE_SINGLE, satuan: PRICE_SINGLE, label: 'Satuan' };
+    // custom: gunakan pola paket 3 + satuan bila memungkinkan
+    if (jumlah > 3) {
+      const packs = Math.floor(jumlah / 3);
+      const sisa = jumlah % 3;
+      const total = packs * PRICE_PACK_3 + sisa * PRICE_SINGLE;
+      return { total, satuan: Math.round(total / jumlah), label: 'Kombinasi paket & satuan' };
+    }
+    // jumlah 2
+    return { total: jumlah * PRICE_SINGLE, satuan: PRICE_SINGLE, label: 'Satuan' };
+  }
+
+  function getJumlah() {
+    if (selectedAmount === 'custom') {
+      const v = parseInt(customInput.value, 10);
+      return (isNaN(v) || v < 1) ? 0 : v;
+    }
+    return selectedAmount;
+  }
+
+  /* ---------- Update Ringkasan ---------- */
+  function updateSummary() {
+    const jenis = jenisSelect.value || 'Belum dipilih';
+    const jumlah = getJumlah();
+
+    $('#sumJenis').textContent = jenis;
+    $('#sumJenis').classList.toggle('empty', !jenisSelect.value);
+
+    if (jumlah > 0) {
+      const info = hitungHarga(jumlah);
+      $('#sumJumlah').textContent = jumlah + ' referensi';
+      $('#sumHarga').textContent = info.total === jumlah * PRICE_SINGLE
+        ? rupiah(PRICE_SINGLE) + ' / referensi'
+        : info.label + ' • ' + rupiah(info.total);
+      $('#sumTotal').textContent = rupiah(info.total);
+      // savings note
+      if (jumlah === 3) {
+        $('#savingsNote').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Paket 3 referensi lebih hemat: kamu hemat Rp1.000 dibanding beli satuan.</span>';
+      } else if (jumlah > 3) {
+        const satuanTotal = jumlah * PRICE_SINGLE;
+        const hemat = satuanTotal - info.total;
+        if (hemat > 0) {
+          $('#savingsNote').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Kamu hemat ' + rupiah(hemat) + ' dengan kombinasi paket.</span>';
+        } else {
+          $('#savingsNote').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Paket 3 referensi lebih hemat dibanding membeli satuan.</span>';
+        }
+      } else {
+        $('#savingsNote').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Paket 3 referensi lebih hemat dibanding membeli satuan.</span>';
+      }
+    } else {
+      $('#sumJumlah').textContent = '—';
+      $('#sumHarga').textContent = '—';
+      $('#sumTotal').textContent = 'Rp0';
+    }
+  }
+
+  // live update from form fields
+  ['#nama', '#topik', '#detail'].forEach(sel => {
+    const el = $(sel);
+    if (el) el.addEventListener('input', () => {
+      el.classList.remove('error');
+      const err = $('#err-' + sel.replace('#',''));
+      if (err) err.classList.remove('show');
+    });
+  });
+
+  /* ---------- Validasi & Kirim WhatsApp ---------- */
+  const waOrderBtn = $('#waOrderBtn');
+
+  function validate() {
+    let ok = true;
+    const nama = $('#nama').value.trim();
+    const topik = $('#topik').value.trim();
+
+    if (!nama) {
+      $('#nama').classList.add('error');
+      $('#err-nama').classList.add('show');
+      ok = false;
+    }
+    if (!topik) {
+      $('#topik').classList.add('error');
+      $('#err-topik').classList.add('show');
+      ok = false;
+    }
+
+    const jumlah = getJumlah();
+    if (selectedAmount === 'custom' && jumlah < 1) {
+      customInput.classList.add('error');
+      $('#err-custom').classList.add('show');
+      ok = false;
+    }
+
+    if (!jenisSelect.value) {
+      showToast('Pilih jenis referensi dulu ya (atau pilih "Bebas / Tidak Yakin").', 'err');
+      ok = false;
+    }
+
+    return ok;
+  }
+
+  waOrderBtn.addEventListener('click', () => {
+    if (!validate()) {
+      showToast('Form belum lengkap. Cek lagi ya.', 'err');
+      // scroll ke form
+      document.getElementById('pesan').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    const nama = $('#nama').value.trim();
+    const topik = $('#topik').value.trim();
+    const jenis = jenisSelect.value || 'Bebas / Tidak Yakin';
+    const jumlah = getJumlah();
+    const detail = $('#detail').value.trim() || '-';
+    const info = hitungHarga(jumlah);
+    const total = rupiah(info.total);
+
+    const pesan =
+      'Halo Reference Express, saya ingin memesan jasa pencarian referensi.\n\n' +
+      'Nama: ' + nama + '\n' +
+      'Topik: ' + topik + '\n' +
+      'Jenis referensi: ' + jenis + '\n' +
+      'Jumlah: ' + jumlah + ' referensi\n' +
+      'Detail kebutuhan: ' + detail + '\n' +
+      'Total harga: ' + total + '\n\n' +
+      'Mohon informasi langkah selanjutnya untuk proses pemesanan dan pembayaran.';
+
+    const url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(pesan);
+    window.open(url, '_blank');
+    showToast('Membuka WhatsApp...', 'ok');
+  });
+
+  /* ---------- Init ---------- */
+  updateSummary();
+
+})();
+</script>
+</body>
+</html>
